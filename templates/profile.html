@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Profile & Account Security - Adv. Mukesh Singh Rathod Chambers{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Profile Info Card -->
+            <div class="legal-card shadow-sm mb-4">
+                <div class="d-flex align-items-center gap-3 border-bottom pb-3 mb-4">
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary mb-0" style="width: 56px; height: 56px;">
+                        <i class="bi bi-person-gear fs-2"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold mb-0">Profile Management</h4>
+                        <p class="text-muted small mb-0">Update your contact information and security settings.</p>
+                    </div>
+                    <span class="badge bg-secondary ms-auto fs-6">{{ current_user.user_type }}</span>
+                </div>
+
+                <form method="POST" action="{{ url_for('update_profile') }}">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Full Legal Name</label>
+                            <input type="text" name="full_name" class="form-control" required value="{{ current_user.full_name }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Email Address (Read-only)</label>
+                            <input type="email" class="form-control bg-body-tertiary" value="{{ current_user.email }}" readonly>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Primary Phone Number</label>
+                            <input type="tel" name="phone" class="form-control" required value="{{ current_user.phone }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">User Role</label>
+                            <input type="text" class="form-control bg-body-tertiary" value="{{ current_user.user_type }}" readonly>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-primary-custom px-4">
+                                <i class="bi bi-check2 me-1"></i> Update Contact Details
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Password Reset Card -->
+            <div class="legal-card shadow-sm">
+                <h5 class="fw-bold border-bottom pb-3 mb-4">
+                    <i class="bi bi-shield-lock text-danger me-2"></i>Password Reset & Credentials
+                </h5>
+
+                <form method="POST" action="{{ url_for('change_password') }}">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">New Password *</label>
+                            <input type="password" name="new_password" class="form-control" required minlength="6" placeholder="At least 6 characters">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Confirm New Password *</label>
+                            <input type="password" name="confirm_password" class="form-control" required minlength="6" placeholder="Re-type new password">
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-outline-danger px-4">
+                                <i class="bi bi-key-fill me-1"></i> Reset Password
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

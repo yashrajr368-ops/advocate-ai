@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Case - Adv. Mukesh Singh Rathod Chambers{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar">
+        <div class="user-info text-center">
+            <div class="stat-icon bg-info bg-opacity-25 text-info mx-auto mb-2" style="width: 44px; height: 44px;">
+                <i class="bi bi-person-circle fs-4"></i>
+            </div>
+            <h6 class="fw-bold text-white mb-1 text-truncate">{{ current_user.full_name }}</h6>
+            <span class="badge bg-info text-dark small">{{ current_user.user_type }}</span>
+        </div>
+
+        <ul class="sidebar-nav">
+            <li class="nav-item">
+                <a href="{{ url_for('client_dashboard') }}" class="nav-link">
+                    <i class="bi bi-grid-1x2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('add_case') }}" class="nav-link active">
+                    <i class="bi bi-plus-circle"></i> Add New Case
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('my_cases') }}" class="nav-link">
+                    <i class="bi bi-folder2-open"></i> My Cases
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('upload_document') }}" class="nav-link">
+                    <i class="bi bi-cloud-arrow-up"></i> Upload Documents
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('ai_chat') }}" class="nav-link">
+                    <i class="bi bi-robot"></i> AI Legal Assistant
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('profile') }}" class="nav-link">
+                    <i class="bi bi-person-gear"></i> Profile
+                </a>
+            </li>
+            <li class="nav-item mt-4 pt-3 border-top border-white border-opacity-10">
+                <a href="{{ url_for('logout') }}" class="nav-link text-danger">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Form Area -->
+    <main class="dashboard-content">
+        <div class="max-w-900 mx-auto">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h2 class="fw-bold mb-1">File New Legal Grievance</h2>
+                    <p class="text-muted small mb-0">Describe your facts accurately. Gemini 2.5 Flash will automatically generate a preliminary legal brief.</p>
+                </div>
+                <a href="{{ url_for('my_cases') }}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Cases
+                </a>
+            </div>
+
+            <div class="legal-card shadow-sm p-4 p-md-5">
+                <form id="addCaseForm" method="POST" action="{{ url_for('add_case') }}" onsubmit="showCaseSubmitLoading()">
+                    <div class="row g-4">
+                        <!-- Client Contact Details -->
+                        <div class="col-12">
+                            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                                <i class="bi bi-person-lines-fill me-2"></i>1. Client Identification
+                            </h6>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Client Full Name *</label>
+                            <input type="text" name="client_name" class="form-control" required value="{{ current_user.full_name }}">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Email Address *</label>
+                            <input type="email" name="email" class="form-control" required value="{{ current_user.email }}">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Phone Number *</label>
+                            <input type="tel" name="phone" class="form-control" required value="{{ current_user.phone }}">
+                        </div>
+
+                        <!-- Case Classification -->
+                        <div class="col-12 mt-4">
+                            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                                <i class="bi bi-briefcase me-2"></i>2. Case Classification & Urgency
+                            </h6>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Case Category *</label>
+                            <select name="category" class="form-select" required>
+                                <option value="" disabled selected>Select practice area...</option>
+                                <option value="Criminal Defense">Criminal Defense (BNS 2023 / IPC / Bail)</option>
+                                <option value="Cyber Crime">Cyber Crime (IT Act 2000 / Online Fraud / Phishing)</option>
+                                <option value="Property & Real Estate">Property & Real Estate (Title / Partition / RERA)</option>
+                                <option value="Matrimonial & Family">Matrimonial & Family (Divorce / Custody / Maintenance)</option>
+                                <option value="Cheque Bounce">Cheque Bounce (Sec 138 Negotiable Instruments Act)</option>
+                                <option value="Consumer Protection">Consumer Protection (Defective Product / Service Failure)</option>
+                                <option value="Corporate & Contract">Corporate & Commercial (Breach of Contract / NCLT)</option>
+                                <option value="Labour & Employment">Labour & Employment (Wrongful Termination / Wages)</option>
+                                <option value="General Civil Dispute">General Civil Dispute (Injunction / Recovery)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Priority Level *</label>
+                            <select name="priority" class="form-select" required>
+                                <option value="Low">Low - Informational & Pre-litigation Inquiry</option>
+                                <option value="Medium" selected>Medium - Normal Legal Notice / Dispute</option>
+                                <option value="High">High - Impending Limitation Deadline / Court Hearing</option>
+                                <option value="Urgent">Urgent - Imminent Arrest / Injunction / Police Action</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold">Case Title *</label>
+                            <input type="text" name="title" class="form-control" placeholder="E.g., Fraudulent withdrawal of ₹2,50,000 via spoofed UPI link" required>
+                        </div>
+
+                        <!-- Facts & Narrative -->
+                        <div class="col-12 mt-4">
+                            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                                <i class="bi bi-journal-text me-2"></i>3. Chronology of Facts & Grievance
+                            </h6>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold">Detailed Description *</label>
+                            <textarea name="description" class="form-control" rows="6" placeholder="Provide complete facts chronologically: dates, amounts, opposing parties, written notices sent or received, police interaction (if any), and desired relief..." required></textarea>
+                            <div class="form-text small">Detailed facts enable Gemini AI to identify exact Bharatiya Nyaya Sanhita (BNS) and IPC sections accurately.</div>
+                        </div>
+
+                        <!-- Submit Button with Loading State -->
+                        <div class="col-12 mt-4 pt-3 border-top">
+                            <button type="submit" id="submitCaseBtn" class="btn btn-primary-custom px-5 py-3 w-100 d-flex align-items-center justify-content-center gap-2">
+                                <i class="bi bi-cpu-fill fs-5"></i>
+                                <span>Submit Case & Trigger Gemini AI Legal Analysis</span>
+                            </button>
+                            
+                            <div id="caseAnalysisLoader" class="text-center py-3 d-none">
+                                <div class="spinner-border text-primary me-2" role="status"></div>
+                                <div class="fw-semibold text-primary mt-2">Gemini AI is analyzing Indian Statutes, BNS sections & court suggestions...</div>
+                                <small class="text-muted">Please wait a moment while your legal dossier is generated.</small>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+function showCaseSubmitLoading() {
+    const btn = document.getElementById('submitCaseBtn');
+    const loader = document.getElementById('caseAnalysisLoader');
+    if (btn && loader) {
+        btn.disabled = true;
+        btn.classList.add('d-none');
+        loader.classList.remove('d-none');
+    }
+}
+</script>
+{% endblock %}

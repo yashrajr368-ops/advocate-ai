@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block title %}Counsel Workspace - Adv. Mukesh Singh Rathod Chambers{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-4 py-4">
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 p-3 bg-body rounded-4 shadow-sm border">
+        <div class="d-flex align-items-center gap-3">
+            <img src="{{ url_for('static', filename='images/advocate.jpg') }}" alt="Advocate Mukesh Singh Rathod" class="rounded-circle shadow border border-warning" style="width: 64px; height: 64px; object-fit: cover; object-position: top;">
+            <div>
+                <div class="badge bg-warning bg-opacity-25 text-warning-emphasis px-2 py-1 rounded-pill mb-1">
+                    <i class="bi bi-award-fill me-1"></i> Private Advocate & Legal Counsel · 20+ Years Practice
+                </div>
+                <h3 class="fw-bold mb-0">Adv. Mukesh Singh Rathod Chambers</h3>
+                <small class="text-muted">District & Sessions Courts · Civil & Criminal Courts, Harsud-Chhanera</small>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('ai_chat') }}" class="btn btn-outline-info d-flex align-items-center gap-2">
+                <i class="bi bi-robot"></i> Ask AI Assistant
+            </a>
+            <a href="{{ url_for('appointment') }}" class="btn btn-outline-primary d-flex align-items-center gap-2">
+                <i class="bi bi-calendar3"></i> Consultations
+            </a>
+        </div>
+    </div>
+
+    <!-- 6 Stat Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat-card p-3">
+                <div class="stat-icon bg-primary bg-opacity-10 text-primary mx-auto mb-2" style="width: 42px; height: 42px; font-size: 1.2rem;">
+                    <i class="bi bi-folder2-open"></i>
+                </div>
+                <div class="stat-value text-center fs-3">{{ total_cases }}</div>
+                <div class="stat-label text-center" style="font-size: 0.75rem;">Total Cases</div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat-card p-3">
+                <div class="stat-icon bg-warning bg-opacity-10 text-warning mx-auto mb-2" style="width: 42px; height: 42px; font-size: 1.2rem;">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+                <div class="stat-value text-center fs-3">{{ pending_cases }}</div>
+                <div class="stat-label text-center" style="font-size: 0.75rem;">Pending Intake</div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat-card p-3">
+                <div class="stat-icon bg-info bg-opacity-10 text-info mx-auto mb-2" style="width: 42px; height: 42px; font-size: 1.2rem;">
+                    <i class="bi bi-gear-wide-connected"></i>
+                </div>
+                <div class="stat-value text-center fs-3">{{ in_progress_cases }}</div>
+                <div class="stat-label text-center" style="font-size: 0.75rem;">In Progress</div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat-card p-3">
+                <div class="stat-icon bg-success bg-opacity-10 text-success mx-auto mb-2" style="width: 42px; height: 42px; font-size: 1.2rem;">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div class="stat-value text-center fs-3">{{ completed_cases }}</div>
+                <div class="stat-label text-center" style="font-size: 0.75rem;">Completed</div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat-card p-3">
+                <div class="stat-icon bg-purple bg-opacity-10 text-primary mx-auto mb-2" style="width: 42px; height: 42px; font-size: 1.2rem;">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <div class="stat-value text-center fs-3">{{ total_clients }}</div>
+                <div class="stat-label text-center" style="font-size: 0.75rem;">Total Clients</div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat-card p-3">
+                <div class="stat-icon bg-secondary bg-opacity-10 text-secondary mx-auto mb-2" style="width: 42px; height: 42px; font-size: 1.2rem;">
+                    <i class="bi bi-file-earmark-check-fill"></i>
+                </div>
+                <div class="stat-value text-center fs-3">{{ uploaded_documents }}</div>
+                <div class="stat-label text-center" style="font-size: 0.75rem;">Documents</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Charts -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <div class="legal-card h-100">
+                <h6 class="fw-bold mb-3"><i class="bi bi-pie-chart-fill text-primary me-2"></i>Cases by Status</h6>
+                <div style="height: 220px;">
+                    <canvas id="advocateStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="legal-card h-100">
+                <h6 class="fw-bold mb-3"><i class="bi bi-bar-chart-fill text-info me-2"></i>Practice Areas Distribution</h6>
+                <div style="height: 220px;">
+                    <canvas id="advocateCategoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter & Search Bar -->
+    <div class="legal-card p-3 mb-4">
+        <form method="GET" action="{{ url_for('advocate_dashboard') }}" class="row g-3 align-items-center">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-body border-end-0"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" name="search" class="form-control border-start-0" placeholder="Search by Client Name, Category, or Title..." value="{{ search }}">
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <select name="status" class="form-select">
+                    <option value="">All Statuses</option>
+                    <option value="Pending" {% if status == 'Pending' %}selected{% endif %}>Pending</option>
+                    <option value="In Progress" {% if status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                    <option value="Under Review" {% if status == 'Under Review' %}selected{% endif %}>Under Review</option>
+                    <option value="Hearing Scheduled" {% if status == 'Hearing Scheduled' %}selected{% endif %}>Hearing Scheduled</option>
+                    <option value="Completed" {% if status == 'Completed' %}selected{% endif %}>Completed</option>
+                    <option value="Closed" {% if status == 'Closed' %}selected{% endif %}>Closed</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary-custom w-100">
+                    <i class="bi bi-funnel me-1"></i> Filter
+                </button>
+            </div>
+
+            <div class="col-md-2">
+                <a href="{{ url_for('advocate_dashboard') }}" class="btn btn-outline-secondary w-100">
+                    Reset
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Professional Case Table -->
+    <div class="legal-card p-0 overflow-hidden">
+        <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0"><i class="bi bi-table text-primary me-2"></i>Active Practice Cases</h5>
+            <span class="badge bg-secondary">{{ cases|length }} Records</span>
+        </div>
+
+        {% if cases %}
+            <div class="table-responsive">
+                <table class="table table-custom align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Client</th>
+                            <th>Category</th>
+                            <th>Title</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Documents</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in cases %}
+                            <tr>
+                                <td><span class="fw-bold text-primary">#{{ c.id }}</span></td>
+                                <td>
+                                    <div class="fw-semibold">{{ c.client_name }}</div>
+                                    <small class="text-muted">{{ c.phone }}</small>
+                                </td>
+                                <td><span class="badge bg-secondary bg-opacity-25 text-body">{{ c.category }}</span></td>
+                                <td>
+                                    <div class="fw-semibold text-truncate" style="max-width: 250px;">{{ c.title }}</div>
+                                    <small class="text-muted text-truncate d-block" style="max-width: 250px;">{{ c.description }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge badge-priority-{{ c.priority }}">{{ c.priority }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-status-{{ c.status|replace(' ', '-') }}">{{ c.status }}</span>
+                                </td>
+                                <td>
+                                    {% if c.documents or c.document_name %}
+                                        <span class="badge bg-success bg-opacity-10 text-success"><i class="bi bi-file-earmark-check me-1"></i>{{ c.documents|length if c.documents else 1 }}</span>
+                                    {% else %}
+                                        <span class="text-muted small">None</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    <a href="{{ url_for('view_case', case_id=c.id) }}" class="btn btn-sm btn-primary-custom d-inline-flex align-items-center gap-1">
+                                        <i class="bi bi-box-arrow-up-right"></i> View Case
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-search fs-1 text-muted d-block mb-3"></i>
+                <h6 class="fw-bold">No Cases Match Your Criteria</h6>
+                <p class="text-muted small">Try adjusting your search query or status filter.</p>
+                <a href="{{ url_for('advocate_dashboard') }}" class="btn btn-outline-secondary btn-sm">Clear Filters</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // Status Doughnut Chart
+    const statusCtx = document.getElementById('advocateStatusChart');
+    if (statusCtx) {
+        new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pending', 'In Progress', 'Completed', 'Other'],
+                datasets: [{
+                    data: [{{ pending_cases }}, {{ in_progress_cases }}, {{ completed_cases }}, {{ (total_cases - pending_cases - in_progress_cases - completed_cases)|default(0) if (total_cases - pending_cases - in_progress_cases - completed_cases) > 0 else 0 }}],
+                    backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#64748b']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'right' } }
+            }
+        });
+    }
+
+    // Category Distribution Chart
+    const catCtx = document.getElementById('advocateCategoryChart');
+    if (catCtx) {
+        new Chart(catCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Criminal', 'Cyber', 'Property', 'Family', 'Cheque', 'Consumer'],
+                datasets: [{
+                    label: 'Cases',
+                    data: [
+                        {{ cases|selectattr('category', 'equalto', 'Criminal Defense')|list|length }},
+                        {{ cases|selectattr('category', 'equalto', 'Cyber Crime')|list|length }},
+                        {{ cases|selectattr('category', 'equalto', 'Property & Real Estate')|list|length }},
+                        {{ cases|selectattr('category', 'equalto', 'Matrimonial & Family')|list|length }},
+                        {{ cases|selectattr('category', 'equalto', 'Cheque Bounce')|list|length }},
+                        {{ cases|selectattr('category', 'equalto', 'Consumer Protection')|list|length }}
+                    ],
+                    backgroundColor: '#1e3a8a'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Book Legal Consultation - Advocate Mukesh Singh Rathod{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row g-4 justify-content-center">
+        <!-- Booking Form Column -->
+        <div class="col-lg-6">
+            <div class="legal-card shadow-sm p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="stat-icon bg-warning bg-opacity-15 text-warning mx-auto mb-2 border border-warning border-opacity-25">
+                        <i class="bi bi-calendar2-check-fill"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1" data-i18n="appt_heading">Book Counsel Consultation</h3>
+                    <p class="text-muted small" data-i18n="appt_subheading">Schedule an in-depth legal consultation directly with <strong>Advocate Mukesh Singh Rathod</strong>.</p>
+                </div>
+
+                <form method="POST" action="{{ url_for('book_appointment') }}">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold" data-i18n="appt_name">Your Full Name *</label>
+                            <input type="text" name="client_name" class="form-control" required value="{{ current_user.full_name if current_user.is_authenticated else '' }}" placeholder="Adv. / Mr. / Ms. Name">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold" data-i18n="appt_email">Email Address *</label>
+                            <input type="email" name="email" class="form-control" required value="{{ current_user.email if current_user.is_authenticated else '' }}" placeholder="name@example.com">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold" data-i18n="appt_phone">Phone Number *</label>
+                            <input type="tel" name="phone" class="form-control" required value="{{ current_user.phone if current_user.is_authenticated else '' }}" placeholder="+91 98765 43210">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold" data-i18n="appt_category">Legal Category / Subject Matter *</label>
+                            <select name="category" class="form-select" required>
+                                <option value="General Consultation">General Legal Consultation</option>
+                                <option value="Criminal Defense">Criminal Defense (BNS / IPC / Bail)</option>
+                                <option value="Cyber Crime">Cyber Crime & Financial Fraud</option>
+                                <option value="Property & Real Estate">Property Disputes & RERA</option>
+                                <option value="Matrimonial & Family">Matrimonial & Divorce</option>
+                                <option value="Cheque Bounce">Cheque Bounce (Sec 138 NI Act)</option>
+                                <option value="Corporate & Contract">Corporate / Commercial Disputes</option>
+                                <option value="Consumer Protection">Consumer Protection Claims</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Date of Consultation *</label>
+                            <input type="date" name="appointment_date" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Preferred Time Slot *</label>
+                            <select name="appointment_time" class="form-select" required>
+                                <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
+                                <option value="11:30 AM - 12:30 PM">11:30 AM - 12:30 PM</option>
+                                <option value="02:00 PM - 03:00 PM">02:00 PM - 03:00 PM</option>
+                                <option value="04:00 PM - 05:00 PM">04:00 PM - 05:00 PM</option>
+                                <option value="06:00 PM - 07:00 PM">06:00 PM - 07:00 PM</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold">Brief Summary of Matter / Inquiries</label>
+                            <textarea name="notes" class="form-control" rows="3" placeholder="State current status of court proceedings or notices received..."></textarea>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-primary-custom w-100 py-2 fw-semibold">
+                                <i class="bi bi-check2-circle me-2"></i> Confirm Appointment
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Column: Advocate Profile & Scheduled Consultations -->
+        <div class="col-lg-6">
+            <!-- Advocate Counsel Card -->
+            <div class="legal-card shadow-sm p-4 mb-4">
+                <div class="d-flex align-items-center gap-3">
+                    <img src="{{ url_for('static', filename='images/advocate.jpg') }}" alt="Advocate Mukesh Singh Rathod" class="rounded-4 shadow border border-warning" style="width: 120px; height: 100px; object-fit: cover; object-position: center;">
+                    <div>
+                        <div class="badge bg-warning bg-opacity-25 text-warning-emphasis px-2 py-1 rounded-pill mb-1 small">
+                            <i class="bi bi-award-fill me-1"></i> Private Advocate · 20+ Years Practice
+                        </div>
+                        <h5 class="fw-bold mb-1">Adv. Mukesh Singh Rathod</h5>
+                        <div class="small text-muted mb-2">District & Sessions Courts · Civil & Criminal Courts, Harsud-Chhanera</div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a href="tel:+919826935975" class="btn btn-sm btn-outline-warning py-1 px-2">
+                                <i class="bi bi-telephone-fill me-1"></i> Call Now
+                            </a>
+                            <a href="https://wa.me/919826935975" target="_blank" class="btn btn-sm btn-outline-success py-1 px-2">
+                                <i class="bi bi-whatsapp me-1"></i> WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-3">
+                <div class="row g-2 small text-muted">
+                    <div class="col-6"><i class="bi bi-pin-map-fill text-danger me-1"></i> Harsud-Chhanera, MP</div>
+                    <div class="col-6"><i class="bi bi-clock-fill text-info me-1"></i> Mon–Sat: 10 AM – 7 PM</div>
+                    <div class="col-12"><i class="bi bi-shield-check text-success me-1"></i> All consultations protected under Attorney-Client Privilege</div>
+                </div>
+            </div>
+
+            <!-- Scheduled Consultations List -->
+            {% if appointments %}
+                <div class="legal-card shadow-sm p-4">
+                    <h5 class="fw-bold border-bottom pb-3 mb-3">
+                        <i class="bi bi-clock-history text-primary me-2"></i>Consultations on Record
+                    </h5>
+
+                    <div class="d-flex flex-column gap-3">
+                        {% for a in appointments %}
+                            <div class="p-3 bg-body-tertiary rounded-3 border">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-secondary">{{ a.category }}</span>
+                                    <span class="badge bg-success">{{ a.status }}</span>
+                                </div>
+                                <h6 class="fw-bold mb-1">{{ a.client_name }}</h6>
+                                <div class="small text-muted mb-2">
+                                    <i class="bi bi-calendar me-1"></i>{{ a.appointment_date }} &nbsp;|&nbsp;
+                                    <i class="bi bi-clock me-1"></i>{{ a.appointment_time }}
+                                </div>
+                                {% if a.notes %}
+                                    <p class="small text-muted mb-0 border-top pt-2">
+                                        <em>"{{ a.notes }}"</em>
+                                    </p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,624 @@
+{% extends "base.html" %}
+
+{% block title %}Advocate Mukesh Singh Rathod - Senior Legal Counsel & AI Legal Chambers{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center text-lg-start">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <div class="hero-badge" data-i18n="hero_badge">
+                    <i class="bi bi-award-fill text-warning"></i> Chambers of Adv. Mukesh Singh Rathod · Est. 20+ Years
+                </div>
+                <h1 class="hero-title mb-2">
+                    <span data-i18n="hero_title_prefix">Advocate</span> <span class="text-warning" data-i18n="hero_title_name">Mukesh Singh Rathod</span>
+                </h1>
+                <h2 class="h4 text-info fw-semibold mb-3" data-i18n="hero_subtitle_role">
+                    Private Advocate & Legal Counsel · District & Sessions Courts · Harsud-Chhanera (MP)
+                </h2>
+                <p class="hero-subtitle" data-i18n="hero_description">
+                    Providing formidable courtroom advocacy, trusted legal counsel, and 24/7 AI-powered legal guidance. Over 20 years of dedicated legal practice across District & Sessions Courts (Khandwa), Sub-Divisional Civil & Criminal Courts (Harsud-Chhanera), and Consumer Dispute Redressal Commissions.
+                </p>
+                <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start mb-4">
+                    <a href="{{ url_for('appointment') }}" class="btn btn-warning text-dark fw-bold px-4 py-3 rounded-pill shadow-lg d-flex align-items-center gap-2">
+                        <i class="bi bi-calendar-check-fill fs-5"></i> <span data-i18n="btn_book_consultation">Book Consultation with Adv. Rathod</span>
+                    </a>
+                    <a href="{{ url_for('ai_chat') }}" class="btn btn-info text-dark fw-bold px-4 py-3 rounded-pill shadow d-flex align-items-center gap-2">
+                        <i class="bi bi-robot fs-5"></i> <span data-i18n="btn_ask_ai">Ask AI Legal Assistant</span>
+                    </a>
+                    <a href="tel:+919826935975" class="btn btn-outline-light px-4 py-3 rounded-pill fw-semibold d-flex align-items-center gap-2">
+                        <i class="bi bi-telephone-fill text-warning"></i> <span data-i18n="btn_call">Call: +91 98269 35975</span>
+                    </a>
+                    <a href="https://wa.me/919826935975" target="_blank" class="btn btn-success px-4 py-3 rounded-pill fw-bold d-flex align-items-center gap-2">
+                        <i class="bi bi-whatsapp"></i> <span data-i18n="btn_whatsapp">WhatsApp</span>
+                    </a>
+                </div>
+                
+                <!-- Trust Counters from rathod-legal-gateway -->
+                <div class="row pt-4 border-top border-white border-opacity-10 text-center text-lg-start g-3">
+                    <div class="col-4">
+                        <div class="fs-3 fw-bold text-warning">20+</div>
+                        <div class="small text-white-50" data-i18n="stat_years">Years of Practice</div>
+                    </div>
+                    <div class="col-4">
+                        <div class="fs-3 fw-bold text-info">500+</div>
+                        <div class="small text-white-50" data-i18n="stat_cases">Cases Handled</div>
+                    </div>
+                    <div class="col-4">
+                        <div class="fs-3 fw-bold text-success">98%</div>
+                        <div class="small text-white-50" data-i18n="stat_trust">Client Trust Score</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick AI Assistant Card on Hero -->
+            <div class="col-lg-5">
+                <div class="card bg-dark text-white border border-secondary border-opacity-25 rounded-4 shadow-lg p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="p-2 bg-info bg-opacity-25 rounded-3 text-info">
+                                <i class="bi bi-shield-check fs-4"></i>
+                            </span>
+                            <div>
+                                <h5 class="mb-0 text-white" data-i18n="triage_title">Quick Legal Triage</h5>
+                                <small class="text-white-50" data-i18n="triage_subtitle">Instant Gemini 2.5 Analysis</small>
+                            </div>
+                        </div>
+                        <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25">Live</span>
+                    </div>
+
+                    <p class="small text-light text-opacity-75 mb-3" data-i18n="triage_desc">
+                        Have an urgent legal problem? Type it below to receive immediate statutory references, section matches, and next steps:
+                    </p>
+
+                    <div class="mb-3">
+                        <textarea id="homeAskInput" class="form-control bg-black text-white border-secondary rounded-3" rows="4" placeholder="E.g., My landlord refused to return my ₹1,50,000 security deposit after 30 days without notice..." data-i18n-placeholder="triage_placeholder"></textarea>
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button id="homeAskBtn" onclick="submitHomeAskAI()" class="btn btn-info text-dark fw-bold py-2 rounded-3 d-flex align-items-center justify-content-center gap-2">
+                            <i class="bi bi-lightning-charge-fill"></i> <span data-i18n="btn_triage_analyze">Analyze Legal Issue Now</span>
+                        </button>
+                    </div>
+
+                    <div id="homeAskSpinner" class="text-center text-info py-2 d-none">
+                        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                        <small>Querying Indian Statutory Repository...</small>
+                    </div>
+
+                    <div id="homeAskResult" class="p-3 bg-black bg-opacity-50 rounded-3 border border-secondary border-opacity-25 text-white small d-none" style="max-height: 250px; overflow-y: auto;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Lead Counsel & Practice Section -->
+<section class="py-5 bg-body" id="aboutAdvocate">
+    <div class="container py-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-5 text-center text-lg-start">
+                <!-- Advocate Portrait Card -->
+                <div class="position-relative d-inline-block">
+                    <div class="p-2 bg-body-tertiary rounded-4 shadow-lg border border-warning border-opacity-50">
+                        <img src="{{ url_for('static', filename='images/advocate.jpg') }}" alt="Advocate Mukesh Singh Rathod at Chambers Desk" class="img-fluid rounded-4 shadow" style="width: 100%; height: 320px; object-fit: cover; object-position: center;">
+                        <div class="p-3 bg-dark text-white rounded-3 mt-2 text-center">
+                            <h5 class="fw-bold mb-0 text-white">Adv. Mukesh Singh Rathod</h5>
+                            <small class="text-warning">Senior Legal Counsel · Est. 20+ Years Practice</small>
+                            <div class="small text-white-50 mt-1">
+                                <i class="bi bi-geo-alt-fill text-danger me-1"></i>Harsud-Chhanera, Madhya Pradesh
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="ps-lg-3">
+                    <div class="badge bg-warning bg-opacity-25 text-warning-emphasis px-3 py-2 rounded-pill mb-3" data-i18n="about_badge">
+                        <i class="bi bi-award-fill me-1"></i> About the Senior Counsel
+                    </div>
+                    <h2 class="display-6 fw-bold mb-3" data-i18n="about_headline">A Career Defined by Trust, Results and Unwavering Integrity.</h2>
+                    <p class="text-muted leading-relaxed mb-3" data-i18n="about_p1">
+                        With over twenty years of dedicated practice, <strong>Advocate Mukesh Singh Rathod</strong> has built an indelible reputation as a principled, fearless, and effective counsel before the <strong>District & Sessions Courts (Khandwa), Sub-Divisional Civil & Criminal Courts (Harsud-Chhanera), and Consumer Dispute Redressal Commissions</strong>.
+                    </p>
+                    <p class="text-muted leading-relaxed mb-4" data-i18n="about_p2">
+                        His practice philosophy combines meticulous case preparation with empathetic client counselling — ensuring every individual, farmer, business owner, and family receives transparent legal strategy, aggressive courtroom representation, and complete peace of mind.
+                    </p>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-sm-6">
+                            <div class="p-3 bg-body-tertiary rounded-3 border h-100">
+                                <div class="fw-bold text-primary mb-1"><i class="bi bi-shield-check me-2"></i>Our Mission</div>
+                                <div class="small text-muted">Deliver accessible, ethical legal counsel that protects fundamental rights and restores peace of mind.</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="p-3 bg-body-tertiary rounded-3 border h-100">
+                                <div class="fw-bold text-success mb-1"><i class="bi bi-gem me-2"></i>Our Core Values</div>
+                                <div class="small text-muted">Integrity, diligence, and absolute confidentiality in every matter — whether trial or appeal.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="{{ url_for('appointment') }}" class="btn btn-primary-custom px-4 py-2">
+                            <i class="bi bi-calendar-check me-2"></i> Schedule Consultation
+                        </a>
+                        <a href="tel:+919826935975" class="btn btn-outline-warning px-4 py-2">
+                            <i class="bi bi-telephone-fill me-2"></i> Direct Call: +91 98269 35975
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+            <div class="col-lg-6">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <div class="legal-card h-100">
+                            <i class="bi bi-file-earmark-lock text-primary fs-1 mb-3"></i>
+                            <h5 class="fw-bold">Confidential & Encrypted</h5>
+                            <p class="small text-muted mb-0">Client confidentiality is paramount. All uploaded documents and case descriptions are strictly protected.</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="legal-card h-100">
+                            <i class="bi bi-speedometer text-info fs-1 mb-3"></i>
+                            <h5 class="fw-bold">Instant Assessment</h5>
+                            <p class="small text-muted mb-0">Receive categorized statutory breakdown, court venue suggestions, and actionable roadmaps in seconds.</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="legal-card h-100">
+                            <i class="bi bi-diagram-3 text-warning fs-1 mb-3"></i>
+                            <h5 class="fw-bold">Seamless Collaboration</h5>
+                            <p class="small text-muted mb-0">Clients upload evidence and notes; advocates update case hearings, status milestones, and legal strategies.</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="legal-card h-100">
+                            <i class="bi bi-printer text-success fs-1 mb-3"></i>
+                            <h5 class="fw-bold">Printable Case Reports</h5>
+                            <p class="small text-muted mb-0">Generate court-ready comprehensive case briefs with AI summaries and advocate recommendations.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Practice Areas / Services Section -->
+<section class="py-5 bg-body-tertiary">
+    <div class="container py-4">
+        <div class="text-center max-w-700 mx-auto mb-5">
+            <span class="badge bg-info text-dark px-3 py-2 rounded-pill fw-semibold" data-i18n="footer_practice">Practice Areas</span>
+            <h2 class="display-6 fw-bold mt-2" data-i18n="practice_heading">Core Practice Areas & Specializations</h2>
+            <p class="text-muted" data-i18n="practice_subheading">Comprehensive legal advisory, trial litigation, and appellate representation across primary domains of Indian Jurisprudence.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="legal-card h-100">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="stat-icon bg-danger bg-opacity-10 text-danger mb-0">
+                            <i class="bi bi-shield-exclamation"></i>
+                        </div>
+                        <h5 class="fw-bold mb-0" data-i18n="practice_criminal_title">Criminal Defense</h5>
+                    </div>
+                    <p class="small text-muted" data-i18n="practice_criminal_desc">Bail applications (Anticipatory/Regular), FIR quashing, BNS 2023 & IPC defense, police harassment representation.</p>
+                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">BNSS & BNS 2023</span>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="legal-card h-100">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="stat-icon bg-info bg-opacity-10 text-info mb-0">
+                            <i class="bi bi-laptop"></i>
+                        </div>
+                        <h5 class="fw-bold mb-0" data-i18n="practice_cyber_title">Cyber Crime & IT Act</h5>
+                    </div>
+                    <p class="small text-muted" data-i18n="practice_cyber_desc">Online banking fraud, financial phishing, identity impersonation, social media defamation under IT Act 2000 & BSA 2023.</p>
+                    <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25">Sec 66C/66D IT Act</span>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="legal-card h-100">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="stat-icon bg-primary bg-opacity-10 text-primary mb-0">
+                            <i class="bi bi-houses"></i>
+                        </div>
+                        <h5 class="fw-bold mb-0" data-i18n="practice_property_title">Property & Real Estate</h5>
+                    </div>
+                    <p class="small text-muted" data-i18n="practice_property_desc">Title verification, partition suits, boundary disputes, tenant eviction, and builder non-compliance before RERA tribunals.</p>
+                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">Transfer of Property</span>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="legal-card h-100">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="stat-icon bg-warning bg-opacity-10 text-warning mb-0">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <h5 class="fw-bold mb-0" data-i18n="practice_family_title">Family & Matrimonial</h5>
+                    </div>
+                    <p class="small text-muted" data-i18n="practice_family_desc">Mutual and contested divorce, permanent alimony, child custody petitions, domestic violence, and maintenance under BNSS.</p>
+                    <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25">HMA & BNSS 144</span>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="legal-card h-100">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="stat-icon bg-success bg-opacity-10 text-success mb-0">
+                            <i class="bi bi-cash-coin"></i>
+                        </div>
+                        <h5 class="fw-bold mb-0" data-i18n="practice_cheque_title">Cheque Bounce & Debt</h5>
+                    </div>
+                    <p class="small text-muted" data-i18n="practice_cheque_desc">15-day statutory demand notices, Section 138 NI Act criminal complaints, Order 37 summary recovery suits.</p>
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">Sec 138 NI Act</span>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="legal-card h-100">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="stat-icon bg-secondary bg-opacity-10 text-secondary mb-0">
+                            <i class="bi bi-cart-x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-0" data-i18n="practice_consumer_title">Consumer Protection</h5>
+                    </div>
+                    <p class="small text-muted" data-i18n="practice_consumer_desc">Deficiency in service, insurance claim repudiations, defective e-commerce goods through e-Daakhil consumer commissions.</p>
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25">CPA 2019</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 bg-body">
+    <div class="container py-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 order-lg-2">
+                <span class="badge bg-primary px-3 py-2 rounded-pill mb-2">Platform Features</span>
+                <h2 class="display-6 fw-bold mb-3">Engineered for Clients and Legal Practitioners</h2>
+                <p class="text-muted mb-4">
+                    Experience a seamless workflow from initial grievance submission to case resolution.
+                </p>
+
+                <div class="d-flex gap-3 mb-3">
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary flex-shrink-0">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Automated Gemini 2.5 Case Analysis</h6>
+                        <p class="small text-muted">Instantly generates 10-point legal briefs: Summary, BNS/IPC sections, evidence needed, next steps, risk level, and court suggestions.</p>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3 mb-3">
+                    <div class="stat-icon bg-info bg-opacity-10 text-info flex-shrink-0">
+                        <i class="bi bi-file-earmark-pdf"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Multi-Format Document Vault</h6>
+                        <p class="small text-muted">Support for PDF, DOC, DOCX, PNG, JPG files. Secure cloud storage with one-click download for advocates and clients.</p>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3 mb-3">
+                    <div class="stat-icon bg-success bg-opacity-10 text-success flex-shrink-0">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Live Case Timeline & Milestones</h6>
+                        <p class="small text-muted">Track status changes, hearing notes, and lawyer consultations with timestamped immutable activity logs.</p>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3">
+                    <div class="stat-icon bg-warning bg-opacity-10 text-warning flex-shrink-0">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Direct Appointment Booking</h6>
+                        <p class="small text-muted">Schedule legal consultations directly with qualified advocates with integrated email confirmation logging.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 order-lg-1">
+                <div class="p-4 bg-dark text-white rounded-4 shadow-lg border border-secondary border-opacity-25">
+                    <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom border-secondary border-opacity-25">
+                        <span class="small fw-semibold text-info"><i class="bi bi-terminal me-2"></i>Chambers Intelligent Legal Workflow</span>
+                        <span class="badge bg-warning text-dark fw-bold">Adv. Mukesh Singh Rathod</span>
+                    </div>
+                    <div class="bg-black bg-opacity-50 p-3 rounded-3 font-monospace small mb-3">
+                        <div class="text-success">&gt; Client submits legal facts and priority level</div>
+                        <div class="text-info">&gt; Gemini AI analyzes against BNS 2023 & IPC codes</div>
+                        <div class="text-warning">&gt; Risk score computed: [High Risk / Urgent Remedy]</div>
+                        <div class="text-light">&gt; Advocate reviews AI brief and updates hearing notes</div>
+                        <div class="text-primary">&gt; Printable court-ready report generated with 1 click</div>
+                    </div>
+                    <div class="row g-2 text-center small">
+                        <div class="col-4 p-2 bg-secondary bg-opacity-25 rounded-2">
+                            <i class="bi bi-database text-info d-block fs-4 mb-1"></i>
+                            SQLAlchemy ORM
+                        </div>
+                        <div class="col-4 p-2 bg-secondary bg-opacity-25 rounded-2">
+                            <i class="bi bi-key text-warning d-block fs-4 mb-1"></i>
+                            Flask-Login Auth
+                        </div>
+                        <div class="col-4 p-2 bg-secondary bg-opacity-25 rounded-2">
+                            <i class="bi bi-moon-stars text-light d-block fs-4 mb-1"></i>
+                            Dark Mode Ready
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us -->
+<section class="py-5 bg-body-tertiary">
+    <div class="container py-4 text-center">
+        <span class="badge bg-warning bg-opacity-15 text-warning px-3 py-2 rounded-pill fw-semibold border border-warning border-opacity-25" data-i18n="why_badge">Why Choose Adv. Mukesh Singh Rathod</span>
+        <h2 class="display-6 fw-bold mt-2 mb-4" data-i18n="why_headline">Precision, Speed, and Unrivaled Courtroom Expertise</h2>
+
+        <div class="row g-4 mt-2 text-start">
+            <div class="col-md-4">
+                <div class="legal-card h-100">
+                    <div class="fs-1 text-primary mb-3"><i class="bi bi-cpu"></i></div>
+                    <h5 class="fw-bold" data-i18n="why_card1_title">Powered by Gemini 2.5 Flash</h5>
+                    <p class="small text-muted" data-i18n="why_card1_desc">Leveraging Google's most sophisticated reasoning model with specialized prompts curated by senior Indian legal scholars.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="legal-card h-100">
+                    <div class="fs-1 text-info mb-3"><i class="bi bi-shield-lock"></i></div>
+                    <h5 class="fw-bold" data-i18n="why_card2_title">Bank-Grade Security</h5>
+                    <p class="small text-muted" data-i18n="why_card2_desc">Password hashing via Werkzeug, secure file upload sanitation, and role-based route security prevent unauthorized access.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="legal-card h-100">
+                    <div class="fs-1 text-warning mb-3"><i class="bi bi-graph-up-arrow"></i></div>
+                    <h5 class="fw-bold" data-i18n="why_card3_title">Real-Time Dashboards</h5>
+                    <p class="small text-muted" data-i18n="why_card3_desc">Dynamic Chart.js metrics, case status categorization, and search filters keep clients and advocates in complete synchronization.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Appointment Booking Section & Contact Form -->
+<section class="py-5 bg-body" id="contactSection">
+    <div class="container py-4">
+        <div class="row g-5">
+            <!-- Appointment Booking Form -->
+            <div class="col-lg-6">
+                <div class="legal-card">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <i class="bi bi-calendar-plus text-primary fs-3"></i>
+                        <h4 class="fw-bold mb-0">Book a Legal Consultation</h4>
+                    </div>
+                    <p class="small text-muted mb-4">Reserve an appointment with an experienced advocate or legal consultant.</p>
+
+                    <form action="{{ url_for('book_appointment') }}" method="POST">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Full Name *</label>
+                                <input type="text" name="client_name" class="form-control" required placeholder="Adv. / Mr. / Ms. Name" value="{{ current_user.full_name if current_user.is_authenticated else '' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Email Address *</label>
+                                <input type="email" name="email" class="form-control" required placeholder="name@example.com" value="{{ current_user.email if current_user.is_authenticated else '' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Phone Number *</label>
+                                <input type="tel" name="phone" class="form-control" required placeholder="+91 98765 43210" value="{{ current_user.phone if current_user.is_authenticated else '' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Practice Area *</label>
+                                <select name="category" class="form-select" required>
+                                    <option value="General Consultation">General Consultation</option>
+                                    <option value="Criminal Defense">Criminal Defense (BNS/IPC)</option>
+                                    <option value="Cyber Crime">Cyber Crime (IT Act)</option>
+                                    <option value="Property & Real Estate">Property & Real Estate</option>
+                                    <option value="Matrimonial & Family">Matrimonial & Family</option>
+                                    <option value="Cheque Bounce">Cheque Bounce (Sec 138 NI)</option>
+                                    <option value="Corporate / Contract">Corporate / Contract</option>
+                                    <option value="Consumer Protection">Consumer Protection</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Preferred Date *</label>
+                                <input type="date" name="appointment_date" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Preferred Time *</label>
+                                <select name="appointment_time" class="form-select" required>
+                                    <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
+                                    <option value="11:30 AM - 12:30 PM">11:30 AM - 12:30 PM</option>
+                                    <option value="02:00 PM - 03:00 PM">02:00 PM - 03:00 PM</option>
+                                    <option value="04:00 PM - 05:00 PM">04:00 PM - 05:00 PM</option>
+                                    <option value="06:00 PM - 07:00 PM">06:00 PM - 07:00 PM</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-semibold">Brief Case Summary</label>
+                                <textarea name="notes" class="form-control" rows="3" placeholder="Describe key facts and current status of your matter..."></textarea>
+                            </div>
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-primary-custom w-100 py-2 d-flex align-items-center justify-content-center gap-2">
+                                    <i class="bi bi-check-circle-fill"></i> Confirm Appointment Request
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Contact Us & Office Info (Advocate Mukesh Singh Rathod Chambers) -->
+            <div class="col-lg-6">
+                <div class="legal-card h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <i class="bi bi-geo-alt-fill text-danger fs-3"></i>
+                            <h4 class="fw-bold mb-0">Visit Our Legal Chambers</h4>
+                        </div>
+                        <p class="small text-muted mb-4">
+                            We welcome you for a confidential consultation at our principal office in Harsud-Chhanera or representation before the District Court Khandwa and Sub-Divisional Courts Harsud-Chhanera.
+                        </p>
+
+                        <!-- Chambers Highlights Card -->
+                        <div class="p-3 bg-body-tertiary rounded-3 border mb-4">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <small class="text-muted text-uppercase fw-semibold d-block">Office Address</small>
+                                    <div class="fw-semibold text-body"><i class="bi bi-pin-map-fill text-danger me-2"></i>Near District Court, Harsud-Chhanera, Madhya Pradesh 450119</div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <small class="text-muted text-uppercase fw-semibold d-block">Direct Telephone</small>
+                                    <a href="tel:+919826935975" class="fw-bold text-primary text-decoration-none"><i class="bi bi-telephone-fill me-1"></i>+91 98269 35975</a>
+                                </div>
+                                <div class="col-sm-6">
+                                    <small class="text-muted text-uppercase fw-semibold d-block">WhatsApp Assistance</small>
+                                    <a href="https://wa.me/919826935975" target="_blank" class="fw-bold text-success text-decoration-none"><i class="bi bi-whatsapp me-1"></i>Chat on WhatsApp</a>
+                                </div>
+                                <div class="col-sm-6">
+                                    <small class="text-muted text-uppercase fw-semibold d-block">Email Inquiries</small>
+                                    <a href="mailto:contact@advocatemukeshrathod.in" class="fw-semibold text-body small"><i class="bi bi-envelope-fill me-1 text-info"></i>contact@advocatemukeshrathod.in</a>
+                                </div>
+                                <div class="col-sm-6">
+                                    <small class="text-muted text-uppercase fw-semibold d-block">Chamber Hours</small>
+                                    <span class="small fw-semibold text-body"><i class="bi bi-clock-fill text-warning me-1"></i>Mon – Sat: 10:00 AM – 7:00 PM</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Direct Message Form -->
+                        <form action="{{ url_for('contact_submit') }}" method="POST">
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Your Full Name</label>
+                                <input type="text" name="contact_name" class="form-control" required placeholder="Shri / Smt. Name">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Email Address or Phone</label>
+                                <input type="text" name="contact_email" class="form-control" required placeholder="Email or 10-digit mobile">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Legal Matter Details</label>
+                                <textarea name="contact_message" class="form-control" rows="3" required placeholder="How can Adv. Mukesh Singh Rathod's chambers assist you?"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-outline-primary w-100 py-2">
+                                <i class="bi bi-send-fill me-1"></i> Send Direct Chamber Inquiry
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top small text-muted">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-shield-check text-success fs-5"></i>
+                            <span>All communications protected under Attorney-Client Privilege.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Client Testimonial & FAQs Section (From Rathod Legal Gateway) -->
+<section class="py-5 bg-body-tertiary">
+    <div class="container py-4">
+        <!-- Testimonial Highlight -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 text-center bg-body">
+                    <i class="bi bi-quote fs-1 text-primary mb-2"></i>
+                    <p class="fs-5 fst-italic text-body mb-3">
+                        "Advocate Mukesh Singh Rathod handled my property dispute with exceptional skill. His clarity, courtroom command, and deep knowledge of Madhya Pradesh land revenue statutes are truly unmatched."
+                    </p>
+                    <div class="fw-bold text-primary">Rajesh Verma</div>
+                    <small class="text-muted">Business Owner, Khandwa, Madhya Pradesh</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQs Accordion -->
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="text-center mb-4">
+                    <span class="badge bg-primary px-3 py-2 rounded-pill fw-semibold" data-i18n="faq_badge">Frequently Asked Questions</span>
+                    <h3 class="fw-bold mt-2" data-i18n="faq_headline">Answers to Common Inquiries</h3>
+                </div>
+
+                <div class="accordion shadow-sm rounded-3 overflow-hidden" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" data-i18n="faq1_q">
+                                How soon will my consultation slot be confirmed?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body small text-muted" data-i18n="faq1_a">
+                                We review submissions promptly and confirm appointment slots within a few hours. For urgent bail, stay, or injunction matters, you can call or message on WhatsApp (+91 98269 35975) for immediate priority attention.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq2" data-i18n="faq2_q">
+                                Which courts does Advocate Rathod appear before?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body small text-muted" data-i18n="faq2_a">
+                                Advocate Mukesh Singh Rathod is an independent private practitioner representing clients before the District & Sessions Courts in Khandwa, Sub-Divisional Civil & Criminal Courts in Harsud-Chhanera, Sub-Divisional Magistrate (SDM) / Tehsildar Revenue Courts, and Consumer Disputes Redressal Commissions.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq3" data-i18n="faq3_q">
+                                Are consultations and shared documents confidential?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body small text-muted" data-i18n="faq3_a">
+                                Absolutely. Every consultation, case statement, and document uploaded to Advocate Mukesh Singh Rathod's vault is strictly protected under Section 126 of the Indian Evidence Act / Section 132 Bharatiya Sakshya Adhiniyam (Attorney-Client Privilege).
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq4" data-i18n="faq4_q">
+                                How does the AI integration assist with my case?
+                            </button>
+                        </h2>
+                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body small text-muted" data-i18n="faq4_a">
+                                Our intelligent legal assistant engine automatically identifies applicable provisions of the new Bharatiya Nyaya Sanhita (BNS 2023), IPC, CrPC, BNSS, and relevant civil acts within seconds, organizing your documents and providing preliminary roadmaps so Advocate Rathod can dive straight into strategic courtroom execution.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

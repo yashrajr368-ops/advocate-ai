@@ -1,0 +1,32 @@
+﻿# Python byte-code / caches
+__pycache__/
+*.py[cod]
+*.class
+*.so
+.pytest_cache/
+
+# Large binary executables
+cloudflared.exe
+*.exe
+
+# Database & local runtime instances
+instance/
+*.db
+*.sqlite3
+
+# Uploaded case documents
+uploads/*
+!uploads/.gitkeep
+
+# Environment variables & secrets
+.env
+.env.local
+
+# Redundant nested clone
+legal_ai/
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

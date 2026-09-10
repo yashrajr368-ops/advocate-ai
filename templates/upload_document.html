@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Case Documents - Adv. Mukesh Singh Rathod Chambers{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar">
+        <div class="user-info text-center">
+            <div class="stat-icon bg-info bg-opacity-25 text-info mx-auto mb-2" style="width: 44px; height: 44px;">
+                <i class="bi bi-person-circle fs-4"></i>
+            </div>
+            <h6 class="fw-bold text-white mb-1 text-truncate">{{ current_user.full_name }}</h6>
+            <span class="badge bg-info text-dark small">{{ current_user.user_type }}</span>
+        </div>
+
+        <ul class="sidebar-nav">
+            <li class="nav-item">
+                <a href="{{ url_for('client_dashboard') }}" class="nav-link">
+                    <i class="bi bi-grid-1x2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('add_case') }}" class="nav-link">
+                    <i class="bi bi-plus-circle"></i> Add New Case
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('my_cases') }}" class="nav-link">
+                    <i class="bi bi-folder2-open"></i> My Cases
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('upload_document') }}" class="nav-link active">
+                    <i class="bi bi-cloud-arrow-up"></i> Upload Documents
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('ai_chat') }}" class="nav-link">
+                    <i class="bi bi-robot"></i> AI Legal Assistant
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('profile') }}" class="nav-link">
+                    <i class="bi bi-person-gear"></i> Profile
+                </a>
+            </li>
+            <li class="nav-item mt-4 pt-3 border-top border-white border-opacity-10">
+                <a href="{{ url_for('logout') }}" class="nav-link text-danger">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Content Area -->
+    <main class="dashboard-content">
+        <div class="max-w-900 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-1">Upload Case Documents</h2>
+                    <p class="text-muted small mb-0">Securely store evidentiary materials, notices, and agreements in your case vault.</p>
+                </div>
+            </div>
+
+            <!-- Upload Card -->
+            <div class="legal-card shadow-sm p-4 p-md-5 mb-4">
+                <form action="{{ url_for('upload_document') }}" method="POST" enctype="multipart/form-data">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Select Associated Case *</label>
+                            <select name="case_id" class="form-select" required>
+                                {% if cases %}
+                                    {% for c in cases %}
+                                        <option value="{{ c.id }}">Case #{{ c.id }}: {{ c.title }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="" disabled selected>No cases found. Create a case first.</option>
+                                {% endif %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Supported Formats</label>
+                            <div class="p-2 bg-body-tertiary rounded-3 small text-muted">
+                                PDF, DOC, DOCX, PNG, JPG, JPEG (Max 16MB)
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold">Choose Document File *</label>
+                            <input type="file" name="document" class="form-control py-3" required accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                        </div>
+
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary-custom px-4 py-2 d-flex align-items-center gap-2">
+                                <i class="bi bi-cloud-arrow-up-fill fs-5"></i> Upload Document to Case Vault
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Uploaded Documents History -->
+            <div class="legal-card p-0 overflow-hidden">
+                <div class="p-3 border-bottom">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-folder-check text-success me-2"></i>Uploaded Documents History</h5>
+                </div>
+
+                {% if documents %}
+                    <div class="table-responsive">
+                        <table class="table table-custom align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Document Name</th>
+                                    <th>Case ID</th>
+                                    <th>File Type</th>
+                                    <th>File Size</th>
+                                    <th>Uploaded At</th>
+                                    <th class="text-end">Download</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for doc in documents %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <i class="bi bi-file-earmark-text text-primary fs-4"></i>
+                                                <span class="fw-semibold">{{ doc.original_filename }}</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('view_case', case_id=doc.case_id) }}" class="fw-bold text-decoration-none">
+                                                Case #{{ doc.case_id }}
+                                            </a>
+                                        </td>
+                                        <td><span class="badge bg-secondary">{{ doc.file_type }}</span></td>
+                                        <td class="small text-muted">{{ doc.file_size }}</td>
+                                        <td class="small text-muted">{{ doc.uploaded_at.strftime('%d %b %Y, %I:%M %p') }}</td>
+                                        <td class="text-end">
+                                            <a href="{{ url_for('uploaded_file', filename=doc.filename) }}" download class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-download me-1"></i> Download
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-file-earmark-x fs-1 d-block mb-2"></i>
+                        <p class="small mb-0">No documents uploaded yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

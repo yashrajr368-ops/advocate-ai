@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Advocate Mukesh Singh Rathod - Legal Counsel & AI Chambers{% endblock %}</title>
+    <meta name="description" content="Official Legal Chambers & AI Portal of Advocate Mukesh Singh Rathod, Senior Counsel with 20+ years of practice at District & Sessions Courts and Sub-Divisional Courts, Harsud-Chhanera (MP).">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom Theme CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top no-print">
+        <div class="container-fluid px-lg-4">
+            <a class="navbar-brand d-flex align-items-center gap-2 py-1" href="{{ url_for('home') }}">
+                <div class="p-2 rounded-3 bg-warning bg-opacity-20 border border-warning border-opacity-50 text-warning d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
+                    <i class="bi bi-shield-shaded fs-4"></i>
+                </div>
+                <div class="d-flex flex-column leading-none">
+                    <span class="fw-bold tracking-tight text-white fs-5" style="letter-spacing: -0.3px;">Adv. Mukesh Singh Rathod</span>
+                    <span class="text-warning small text-uppercase fw-semibold" style="font-size: 0.70rem; letter-spacing: 0.8px;" data-i18n="brand_subtitle">Private Legal Counsel & Chambers · Harsud-Chhanera (MP)</span>
+                </div>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'home' %}active{% endif %}" href="{{ url_for('home') }}" data-i18n="nav_home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('home') }}#aboutAdvocate" data-i18n="nav_about">About Counsel</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'ai_chat' %}active{% endif %}" href="{{ url_for('ai_chat') }}">
+                            <i class="bi bi-robot me-1 text-info"></i> <span data-i18n="nav_ask_ai">Ask AI</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'appointment' %}active{% endif %}" href="{{ url_for('appointment') }}">
+                            <i class="bi bi-calendar-check me-1"></i> <span data-i18n="nav_book">Book Appointment</span>
+                        </a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.user_type == 'Advocate' %}
+                            <li class="nav-item">
+                                <a class="nav-link text-warning fw-semibold" href="{{ url_for('advocate_dashboard') }}">
+                                    <i class="bi bi-briefcase me-1"></i> <span data-i18n="nav_advocate_portal">Advocate Portal</span>
+                                </a>
+                            </li>
+                        {% elif current_user.user_type == 'Admin' %}
+                            <li class="nav-item">
+                                <a class="nav-link text-danger fw-semibold" href="{{ url_for('admin_dashboard') }}">
+                                    <i class="bi bi-speedometer2 me-1"></i> <span data-i18n="nav_admin_panel">Admin Panel</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link text-info fw-semibold" href="{{ url_for('client_dashboard') }}">
+                                    <i class="bi bi-grid-1x2 me-1"></i> <span data-i18n="nav_client_dashboard">Client Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('my_cases') }}" data-i18n="nav_my_cases">My Cases</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('add_case') }}">
+                                    <i class="bi bi-plus-circle me-1"></i> <span data-i18n="nav_new_case">New Case</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Language Selector (English / हिंदी) -->
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-warning dropdown-toggle d-flex align-items-center gap-1 rounded-pill px-2 py-1" type="button" id="langDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Language / भाषा बदलें">
+                            <i class="bi bi-translate text-warning"></i>
+                            <span id="currentLangLabel" class="fw-semibold">English</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-secondary" aria-labelledby="langDropdown">
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center justify-content-between py-2" href="javascript:void(0)" onclick="setLanguage('en')">
+                                    <span><i class="bi bi-globe me-2 text-info"></i>English</span>
+                                    <i class="bi bi-check2 text-warning fw-bold d-none" id="check-en"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center justify-content-between py-2" href="javascript:void(0)" onclick="setLanguage('hi')">
+                                    <span><i class="bi bi-translate me-2 text-warning"></i>हिंदी (Hindi)</span>
+                                    <i class="bi bi-check2 text-warning fw-bold d-none" id="check-hi"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Theme Toggle Button -->
+                    <button class="btn btn-outline-secondary border-0 text-light px-2" id="themeToggleBtn" title="Toggle Dark/Light Mode">
+                        <i class="bi bi-moon-stars-fill fs-5" id="themeIcon"></i>
+                    </button>
+
+                    {% if current_user.is_authenticated %}
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-light dropdown-toggle d-flex align-items-center gap-2 py-1 px-3 rounded-pill" type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle fs-5 text-info"></i>
+                                <span class="d-none d-md-inline">{{ current_user.full_name }}</span>
+                                <span class="badge bg-secondary ms-1 small">{{ current_user.user_type }}</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                <li>
+                                    <h6 class="dropdown-header text-truncate" style="max-width: 200px;">{{ current_user.email }}</h6>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                {% if current_user.user_type == 'Advocate' %}
+                                    <li><a class="dropdown-item" href="{{ url_for('advocate_dashboard') }}"><i class="bi bi-speedometer2 me-2"></i><span data-i18n="nav_advocate_portal">Dashboard</span></a></li>
+                                {% elif current_user.user_type == 'Admin' %}
+                                    <li><a class="dropdown-item" href="{{ url_for('admin_dashboard') }}"><i class="bi bi-shield-lock me-2"></i><span data-i18n="nav_admin_panel">Admin Dashboard</span></a></li>
+                                {% else %}
+                                    <li><a class="dropdown-item" href="{{ url_for('client_dashboard') }}"><i class="bi bi-grid-1x2 me-2"></i><span data-i18n="nav_client_dashboard">Client Dashboard</span></a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('my_cases') }}"><i class="bi bi-folder2-open me-2"></i><span data-i18n="nav_my_cases">My Cases</span></a></li>
+                                {% endif %}
+                                <li><a class="dropdown-item" href="{{ url_for('profile') }}"><i class="bi bi-gear me-2"></i><span data-i18n="nav_profile">Profile & Security</span></a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right me-2"></i><span data-i18n="nav_logout">Logout</span></a></li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-sm px-3 rounded-pill">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> <span data-i18n="nav_login">Login</span>
+                        </a>
+                        <a href="{{ url_for('register') }}" class="btn btn-warning btn-sm px-3 text-dark fw-bold rounded-pill">
+                            <i class="bi bi-person-plus me-1"></i> <span data-i18n="nav_register">Register</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages Container -->
+    <div class="container mt-3 no-print">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {% set alert_type = 'info' %}
+                    {% if category in ['danger', 'error'] %}{% set alert_type = 'danger' %}
+                    {% elif category == 'success' %}{% set alert_type = 'success' %}
+                    {% elif category == 'warning' %}{% set alert_type = 'warning' %}
+                    {% endif %}
+                    <div class="alert alert-{{ alert_type }} alert-dismissible fade show shadow-sm border-0 d-flex align-items-center" role="alert">
+                        <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+                        <div>{{ message }}</div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content Block -->
+    <main class="flex-grow-1">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Professional Footer -->
+    <footer class="no-print">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="p-2 rounded-3 bg-warning bg-opacity-20 border border-warning border-opacity-50 text-warning d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                            <i class="bi bi-shield-shaded fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="brand-title text-white mb-0">CHAMBERS OF ADV. MUKESH SINGH RATHOD</h5>
+                            <small class="text-warning text-uppercase" style="font-size: 0.68rem; letter-spacing: 1px;">Legal Counsel & AI Gateway</small>
+                        </div>
+                    </div>
+                    <p class="small text-muted mb-3">
+                        Official Legal Chambers & AI Portal of Advocate Mukesh Singh Rathod, Senior Counsel with 20+ years of dedicated practice across District & Sessions Courts (Khandwa) and Sub-Divisional Courts (Harsud-Chhanera). Augmented by 24/7 intelligent AI legal triage.
+                    </p>
+                    <div class="d-flex gap-3 text-white-50">
+                        <a href="#" class="fs-5 text-warning" title="Verified Advocate Chambers"><i class="bi bi-patch-check-fill"></i></a>
+                        <a href="#" class="fs-5 text-info" title="District & Sessions Court Practice"><i class="bi bi-bank"></i></a>
+                        <a href="#" class="fs-5 text-success" title="Encrypted Case Vault"><i class="bi bi-shield-lock-fill"></i></a>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <h5>Navigation</h5>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="{{ url_for('home') }}">Home</a></li>
+                        <li class="mb-2"><a href="{{ url_for('home') }}#aboutAdvocate">About Counsel</a></li>
+                        <li class="mb-2"><a href="{{ url_for('ai_chat') }}">Ask AI Assistant</a></li>
+                        <li class="mb-2"><a href="{{ url_for('appointment') }}">Book Appointment</a></li>
+                        <li class="mb-2"><a href="{{ url_for('login') }}">Client / Advocate Login</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <h5>Practice Areas</h5>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="#">Criminal Defense (BNS / IPC)</a></li>
+                        <li class="mb-2"><a href="#">Cyber Crime & IT Act 2000</a></li>
+                        <li class="mb-2"><a href="#">Property & Real Estate (RERA)</a></li>
+                        <li class="mb-2"><a href="#">Matrimonial & Family Law</a></li>
+                        <li class="mb-2"><a href="#">Cheque Bounce (Sec 138 NI Act)</a></li>
+                        <li class="mb-2"><a href="#">Consumer Protection (e-Daakhil)</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h5>Chambers & Office</h5>
+                    <div class="fw-bold text-white small mb-1">Adv. Mukesh Singh Rathod</div>
+                    <div class="small text-muted mb-2">District & Sessions Court, Khandwa · Civil & Criminal Courts, Harsud-Chhanera</div>
+                    <div class="small mb-1"><i class="bi bi-geo-alt-fill me-2 text-info"></i>Near District Court, Harsud-Chhanera, MP 450119</div>
+                    <div class="small mb-1"><i class="bi bi-telephone-fill me-2 text-info"></i><a href="tel:+919826935975" class="text-info fw-semibold">+91 98269 35975</a></div>
+                    <div class="small mb-1"><i class="bi bi-whatsapp me-2 text-success"></i><a href="https://wa.me/919826935975" target="_blank" class="text-success fw-semibold">Chat on WhatsApp</a></div>
+                    <div class="small mb-2"><i class="bi bi-envelope-fill me-2 text-info"></i><a href="mailto:contact@advocatemukeshrathod.in">contact@advocatemukeshrathod.in</a></div>
+                    <div class="small text-white-50"><i class="bi bi-clock me-1 text-warning"></i> Mon – Sat: 10:00 AM – 7:00 PM</div>
+                </div>
+            </div>
+            <hr class="my-4 border-secondary opacity-25">
+            <div class="d-flex flex-wrap justify-content-between align-items-center small text-muted">
+                <div>&copy; 2026 Advocate Mukesh Singh Rathod. All Rights Reserved. Justice • Integrity • Commitment.</div>
+                <div class="text-end">
+                    <span class="badge bg-dark border border-secondary text-warning">Adv. Mukesh Singh Rathod Chambers</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Action Buttons for Quick Contact -->
+    <div class="position-fixed bottom-0 end-0 p-3 no-print d-flex flex-column gap-2" style="z-index: 1080;">
+        <a href="https://wa.me/919826935975" target="_blank" class="btn btn-success rounded-circle shadow-lg d-flex align-items-center justify-content-center" style="width: 52px; height: 52px;" title="Chat on WhatsApp with Advocate Rathod">
+            <i class="bi bi-whatsapp fs-3"></i>
+        </a>
+        <a href="tel:+919826935975" class="btn btn-primary rounded-circle shadow-lg d-flex align-items-center justify-content-center" style="width: 52px; height: 52px;" title="Call Chambers: +91 98269 35975">
+            <i class="bi bi-telephone-fill fs-4"></i>
+        </a>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Bilingual Translations & Language Switcher -->
+    <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
+    
+    <!-- Custom Theme JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

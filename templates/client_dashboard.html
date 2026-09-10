@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+{% block title %}Client Portal - Adv. Mukesh Singh Rathod Chambers{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar">
+        <div class="user-info text-center">
+            <div class="stat-icon bg-info bg-opacity-25 text-info mx-auto mb-2" style="width: 44px; height: 44px;">
+                <i class="bi bi-person-circle fs-4"></i>
+            </div>
+            <h6 class="fw-bold text-white mb-1 text-truncate">{{ current_user.full_name }}</h6>
+            <span class="badge bg-info text-dark small">{{ current_user.user_type }}</span>
+        </div>
+
+        <ul class="sidebar-nav">
+            <li class="nav-item">
+                <a href="{{ url_for('client_dashboard') }}" class="nav-link active">
+                    <i class="bi bi-grid-1x2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('add_case') }}" class="nav-link">
+                    <i class="bi bi-plus-circle"></i> Add New Case
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('my_cases') }}" class="nav-link">
+                    <i class="bi bi-folder2-open"></i> My Cases
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('ai_chat') }}" class="nav-link">
+                    <i class="bi bi-robot"></i> Ask AI
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('appointment') }}" class="nav-link">
+                    <i class="bi bi-calendar-check"></i> Book Consultation
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('profile') }}" class="nav-link">
+                    <i class="bi bi-person"></i> Profile
+                </a>
+            </li>
+            <li class="nav-item mt-4 pt-3 border-top border-secondary border-opacity-25">
+                <a href="{{ url_for('logout') }}" class="nav-link text-danger">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Content Area -->
+    <main class="dashboard-content">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+            <div>
+                <div class="badge bg-warning bg-opacity-15 text-warning px-2 py-1 rounded-pill mb-1 small border border-warning border-opacity-25">
+                    <i class="bi bi-shield-check me-1"></i> Chambers of Adv. Mukesh Singh Rathod
+                </div>
+                <h2 class="fw-bold mb-1">Client Dashboard</h2>
+                <p class="text-muted small mb-0">Overview of your legal matters, uploaded evidence, and AI analysis reports.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('add_case') }}" class="btn btn-primary-custom d-flex align-items-center gap-2">
+                    <i class="bi bi-plus-lg"></i> Add New Case
+                </a>
+                <a href="{{ url_for('ai_chat') }}" class="btn btn-outline-info d-flex align-items-center gap-2">
+                    <i class="bi bi-robot"></i> Ask AI
+                </a>
+            </div>
+        </div>
+
+        <!-- 4 Stat Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-sm-6 col-xl-3">
+                <div class="stat-card">
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-folder2"></i>
+                    </div>
+                    <div class="stat-value">{{ total_cases }}</div>
+                    <div class="stat-label">Total Cases</div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3">
+                <div class="stat-card">
+                    <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                        <i class="bi bi-hourglass-split"></i>
+                    </div>
+                    <div class="stat-value">{{ pending_cases }}</div>
+                    <div class="stat-label">Pending Cases</div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3">
+                <div class="stat-card">
+                    <div class="stat-icon bg-success bg-opacity-10 text-success">
+                        <i class="bi bi-check2-circle"></i>
+                    </div>
+                    <div class="stat-value">{{ completed_cases }}</div>
+                    <div class="stat-label">Completed Cases</div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3">
+                <div class="stat-card">
+                    <div class="stat-icon bg-info bg-opacity-10 text-info">
+                        <i class="bi bi-file-earmark-check"></i>
+                    </div>
+                    <div class="stat-value">{{ documents_count }}</div>
+                    <div class="stat-label">Documents Uploaded</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts and Quick Action Row -->
+        <div class="row g-4 mb-4">
+            <div class="col-lg-8">
+                <div class="legal-card h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0"><i class="bi bi-bar-chart-fill text-primary me-2"></i>Case Status Overview</h5>
+                    </div>
+                    <div style="height: 240px;">
+                        <canvas id="clientCaseChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="legal-card h-100">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Quick Actions</h5>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('add_case') }}" class="btn btn-outline-primary text-start p-3 rounded-3">
+                            <i class="bi bi-file-earmark-plus fs-5 me-2"></i>
+                            <strong>File New Grievance</strong>
+                            <div class="small text-muted">Get Gemini AI analysis instantly</div>
+                        </a>
+                        <a href="{{ url_for('upload_document') }}" class="btn btn-outline-info text-start p-3 rounded-3">
+                            <i class="bi bi-cloud-upload fs-5 me-2"></i>
+                            <strong>Upload Evidence</strong>
+                            <div class="small text-muted">Attach FIR, notices, deeds, or receipts</div>
+                        </a>
+                        <a href="{{ url_for('appointment') }}" class="btn btn-outline-success text-start p-3 rounded-3">
+                            <i class="bi bi-calendar-check fs-5 me-2"></i>
+                            <strong>Schedule Consultation</strong>
+                            <div class="small text-muted">Meet with senior legal counsel</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Cases Table -->
+        <div class="legal-card">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                <h5 class="fw-bold mb-0"><i class="bi bi-clock-history text-info me-2"></i>Recent Legal Cases</h5>
+                <a href="{{ url_for('my_cases') }}" class="btn btn-sm btn-outline-secondary">View All Cases</a>
+            </div>
+
+            {% if recent_cases %}
+                <div class="table-responsive">
+                    <table class="table table-custom align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Case ID</th>
+                                <th>Category</th>
+                                <th>Title</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Date Filed</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in recent_cases %}
+                                <tr>
+                                    <td><span class="fw-bold text-primary">#{{ c.id }}</span></td>
+                                    <td><span class="badge bg-secondary bg-opacity-25 text-body">{{ c.category }}</span></td>
+                                    <td>
+                                        <div class="fw-semibold text-truncate" style="max-width: 260px;">{{ c.title }}</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-priority-{{ c.priority }}">{{ c.priority }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-status-{{ c.status|replace(' ', '-') }}">{{ c.status }}</span>
+                                    </td>
+                                    <td class="small text-muted">{{ c.created_at.strftime('%d %b %Y') }}</td>
+                                    <td class="text-end">
+                                        <a href="{{ url_for('view_case', case_id=c.id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye me-1"></i> View Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-folder-x fs-1 text-muted d-block mb-3"></i>
+                    <h6 class="fw-bold">No Cases Filed Yet</h6>
+                    <p class="text-muted small">Submit your first legal issue to receive instant Gemini AI legal breakdown.</p>
+                    <a href="{{ url_for('add_case') }}" class="btn btn-primary-custom btn-sm">Add New Case</a>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const ctx = document.getElementById('clientCaseChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pending', 'In Progress', 'Completed', 'Other'],
+                datasets: [{
+                    data: [{{ pending_cases }}, {{ in_progress_cases|default(0) }}, {{ completed_cases }}, {{ (total_cases - pending_cases - in_progress_cases|default(0) - completed_cases)|default(0) if (total_cases - pending_cases - in_progress_cases|default(0) - completed_cases) > 0 else 0 }}],
+                    backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#64748b'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

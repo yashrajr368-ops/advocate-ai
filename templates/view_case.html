@@ -1,0 +1,339 @@
+{% extends "base.html" %}
+
+{% block title %}Case #{{ case.id }} Details - Adv. Mukesh Singh Rathod Chambers{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb & Top Actions -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb small mb-1">
+                    {% if current_user.user_type in ['Advocate', 'Admin'] %}
+                        <li class="breadcrumb-item"><a href="{{ url_for('advocate_dashboard') }}">Advocate Dashboard</a></li>
+                    {% else %}
+                        <li class="breadcrumb-item"><a href="{{ url_for('client_dashboard') }}">Client Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url_for('my_cases') }}">My Cases</a></li>
+                    {% endif %}
+                    <li class="breadcrumb-item active">Case #{{ case.id }}</li>
+                </ol>
+            </nav>
+            <h3 class="fw-bold mb-0">Case #{{ case.id }}: {{ case.title }}</h3>
+        </div>
+
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('case_report', case_id=case.id) }}" target="_blank" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+                <i class="bi bi-printer"></i> Printable Case Report
+            </a>
+            {% if current_user.user_type in ['Advocate', 'Admin'] %}
+                <a href="{{ url_for('advocate_dashboard') }}" class="btn btn-primary-custom d-flex align-items-center gap-2">
+                    <i class="bi bi-arrow-left"></i> Back to Dashboard
+                </a>
+            {% else %}
+                <a href="{{ url_for('my_cases') }}" class="btn btn-outline-primary d-flex align-items-center gap-2">
+                    <i class="bi bi-arrow-left"></i> Back to My Cases
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left Column: Case Overview, Client Details, Advocate Notes & Documents -->
+        <div class="col-lg-5">
+            <!-- Client & Matter Metadata -->
+            <div class="legal-card mb-4">
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-person-badge text-primary me-2"></i>Client Profile</h5>
+                    <span class="badge badge-status-{{ case.status|replace(' ', '-') }} fs-6">{{ case.status }}</span>
+                </div>
+
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2 d-flex justify-content-between">
+                        <span class="text-muted small">Client Name:</span>
+                        <span class="fw-semibold">{{ case.client_name }}</span>
+                    </li>
+                    <li class="mb-2 d-flex justify-content-between">
+                        <span class="text-muted small">Email Address:</span>
+                        <a href="mailto:{{ case.email }}" class="text-decoration-none fw-semibold">{{ case.email }}</a>
+                    </li>
+                    <li class="mb-2 d-flex justify-content-between">
+                        <span class="text-muted small">Phone Contact:</span>
+                        <a href="tel:{{ case.phone }}" class="text-decoration-none fw-semibold">{{ case.phone }}</a>
+                    </li>
+                    <li class="mb-2 d-flex justify-content-between">
+                        <span class="text-muted small">Category:</span>
+                        <span class="badge bg-secondary bg-opacity-25 text-body">{{ case.category }}</span>
+                    </li>
+                    <li class="mb-2 d-flex justify-content-between">
+                        <span class="text-muted small">Priority:</span>
+                        <span class="badge badge-priority-{{ case.priority }}">{{ case.priority }}</span>
+                    </li>
+                    <li class="d-flex justify-content-between">
+                        <span class="text-muted small">Filing Timestamp:</span>
+                        <span class="small text-muted">{{ case.created_at.strftime('%d %b %Y, %I:%M %p') }}</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Case Narrative / Facts -->
+            <div class="legal-card mb-4">
+                <h5 class="fw-bold border-bottom pb-3 mb-3">
+                    <i class="bi bi-file-text text-info me-2"></i>Statement of Facts
+                </h5>
+                <div class="p-3 bg-body-tertiary rounded-3 text-break small" style="white-space: pre-wrap; line-height: 1.7;">
+                    {{ case.description }}
+                </div>
+            </div>
+
+            <!-- Advocate Controls (Update Status & Notes) -->
+            {% if current_user.user_type in ['Advocate', 'Admin'] %}
+                <div class="legal-card border-warning border-opacity-50 mb-4">
+                    <div class="d-flex align-items-center gap-2 border-bottom pb-3 mb-3">
+                        <i class="bi bi-pencil-square text-warning fs-4"></i>
+                        <h5 class="fw-bold mb-0">Advocate Case Management</h5>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('update_case', case_id=case.id) }}">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Case Judicial Status</label>
+                            <select name="status" class="form-select" required>
+                                <option value="Pending" {% if case.status == 'Pending' %}selected{% endif %}>Pending (Initial Intake)</option>
+                                <option value="In Progress" {% if case.status == 'In Progress' %}selected{% endif %}>In Progress (Drafting / Notice)</option>
+                                <option value="Under Review" {% if case.status == 'Under Review' %}selected{% endif %}>Under Review (Evidence Scrutiny)</option>
+                                <option value="Hearing Scheduled" {% if case.status == 'Hearing Scheduled' %}selected{% endif %}>Hearing Scheduled (Court Listed)</option>
+                                <option value="Completed" {% if case.status == 'Completed' %}selected{% endif %}>Completed (Relief Granted / Decreed)</option>
+                                <option value="Closed" {% if case.status == 'Closed' %}selected{% endif %}>Closed (Disposed / Settled)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Advocate Notes & Legal Strategy</label>
+                            <textarea name="advocate_notes" class="form-control" rows="4" placeholder="Enter confidential trial notes, hearing dates, or advice for the client...">{{ case.advocate_notes or '' }}</textarea>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-warning fw-bold py-2">
+                                <i class="bi bi-save me-2"></i> Save Status & Advocate Notes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            {% else %}
+                {% if case.advocate_notes %}
+                    <div class="legal-card border-info border-opacity-50 mb-4">
+                        <h5 class="fw-bold text-info border-bottom pb-3 mb-3">
+                            <i class="bi bi-chat-quote-fill me-2"></i>Notes from Assigned Advocate
+                        </h5>
+                        <div class="p-3 bg-body-tertiary rounded-3 small" style="white-space: pre-wrap;">
+                            {{ case.advocate_notes }}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <!-- Uploaded Evidence & Documents -->
+            <div class="legal-card mb-4">
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-paperclip text-success me-2"></i>Case Documents</h5>
+                    <button class="btn btn-sm btn-outline-success" type="button" data-bs-toggle="collapse" data-bs-target="#uploadDocBox">
+                        <i class="bi bi-plus-lg"></i> Upload File
+                    </button>
+                </div>
+
+                <!-- Document Upload Collapse Form -->
+                <div class="collapse mb-3" id="uploadDocBox">
+                    <form action="{{ url_for('upload_document') }}" method="POST" enctype="multipart/form-data" class="p-3 bg-body-tertiary rounded-3 border">
+                        <input type="hidden" name="case_id" value="{{ case.id }}">
+                        <label class="form-label small fw-semibold">Select File (PDF, DOC, DOCX, Images)</label>
+                        <input type="file" name="document" class="form-control form-control-sm mb-2" required accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                        <button type="submit" class="btn btn-sm btn-success w-100">Upload to Case Vault</button>
+                    </form>
+                </div>
+
+                <!-- Attached Documents List -->
+                {% if case.documents or case.document_name %}
+                    <div class="list-group list-group-flush">
+                        {% for doc in case.documents %}
+                            <div class="list-group-item px-0 d-flex justify-content-between align-items-center bg-transparent">
+                                <div class="d-flex align-items-center gap-2 text-truncate" style="max-width: 220px;">
+                                    <i class="bi bi-file-earmark-arrow-down fs-4 text-primary"></i>
+                                    <div>
+                                        <div class="fw-semibold small text-truncate">{{ doc.original_filename }}</div>
+                                        <div class="small text-muted">{{ doc.file_size }} • {{ doc.uploaded_at.strftime('%d %b') }}</div>
+                                    </div>
+                                </div>
+                                <a href="{{ url_for('uploaded_file', filename=doc.filename) }}" download class="btn btn-sm btn-outline-primary py-1 px-2">
+                                    <i class="bi bi-download"></i> Download
+                                </a>
+                            </div>
+                        {% endfor %}
+
+                        {% if case.document_name and not case.documents %}
+                            <div class="list-group-item px-0 d-flex justify-content-between align-items-center bg-transparent">
+                                <div class="d-flex align-items-center gap-2 text-truncate">
+                                    <i class="bi bi-file-earmark-text fs-4 text-primary"></i>
+                                    <div>
+                                        <div class="fw-semibold small">{{ case.document_name }}</div>
+                                        <div class="small text-muted">Primary Case Document</div>
+                                    </div>
+                                </div>
+                                <a href="{{ url_for('uploaded_file', filename=case.document_name) }}" download class="btn btn-sm btn-outline-primary py-1 px-2">
+                                    <i class="bi bi-download"></i> Download
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p class="small text-muted mb-0 text-center py-3">No documents uploaded for this case yet.</p>
+                {% endif %}
+            </div>
+
+            <!-- Case Activity Timeline -->
+            <div class="legal-card">
+                <h5 class="fw-bold border-bottom pb-3 mb-3">
+                    <i class="bi bi-clock-history text-secondary me-2"></i>Case History & Timeline
+                </h5>
+                {% if case.timeline %}
+                    <div class="timeline mt-3">
+                        {% for item in case.timeline %}
+                            <div class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="fw-semibold small">{{ item.action }}</div>
+                                <div class="small text-muted">{{ item.description }}</div>
+                                <div class="small text-muted opacity-75" style="font-size: 0.75rem;">
+                                    {{ item.performed_by }} • {{ item.timestamp.strftime('%d %b %Y, %I:%M %p') }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="small text-muted mb-0">Case opened on {{ case.created_at.strftime('%d %b %Y') }}.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right Column: AI Legal Intelligence Breakdown -->
+        <div class="col-lg-7">
+            {% set report = case.latest_ai_report %}
+            <div class="legal-card shadow-sm border-primary border-opacity-25 p-4 p-md-5">
+                <div class="d-flex flex-wrap justify-content-between align-items-center border-bottom pb-3 mb-4 gap-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="p-2 bg-primary bg-opacity-10 text-primary rounded-3">
+                            <i class="bi bi-robot fs-4"></i>
+                        </span>
+                        <div>
+                            <h4 class="fw-bold mb-0">Gemini AI Legal Intelligence</h4>
+                            <small class="text-muted">Analyzed against Indian Statutory Codifications</small>
+                        </div>
+                    </div>
+                    {% if report %}
+                        <span class="risk-badge-{{ report.risk_level }}">Risk: {{ report.risk_level }}</span>
+                    {% endif %}
+                </div>
+
+                {% if report %}
+                    <!-- 1. Case Summary -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-primary mb-2">
+                            <i class="bi bi-file-earmark-text-fill me-2"></i>1. Case Summary
+                        </h6>
+                        <div class="p-3 bg-body-tertiary rounded-3 text-secondary-emphasis small leading-relaxed">
+                            {{ report.case_summary }}
+                        </div>
+                    </div>
+
+                    <!-- 2. Possible Indian Laws & Statutes -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-primary mb-2">
+                            <i class="bi bi-book-half me-2"></i>2. Applicable Indian Enactments & Laws
+                        </h6>
+                        <div class="p-3 bg-body-tertiary rounded-3 small">
+                            {{ report.possible_laws }}
+                        </div>
+                    </div>
+
+                    <!-- 3. Possible IPC / BNS Sections -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-danger mb-2">
+                            <i class="bi bi-shield-shaded me-2"></i>3. Relevant IPC / BNS Sections
+                        </h6>
+                        <div class="p-3 bg-danger bg-opacity-10 border border-danger border-opacity-25 rounded-3 small text-danger-emphasis">
+                            {{ report.possible_sections }}
+                        </div>
+                    </div>
+
+                    <!-- 4. Required Documents Checklist -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-info mb-2">
+                            <i class="bi bi-check2-square me-2"></i>4. Essential Documents Required
+                        </h6>
+                        <div class="p-3 bg-body-tertiary rounded-3 small">
+                            <div style="white-space: pre-line;">{{ report.required_documents }}</div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Evidence Required -->
+                    {% if report.evidence_required %}
+                        <div class="mb-4">
+                            <h6 class="fw-bold text-warning mb-2">
+                                <i class="bi bi-fingerprint me-2"></i>5. Corroborative Evidence Needed
+                            </h6>
+                            <div class="p-3 bg-warning bg-opacity-10 border border-warning border-opacity-25 rounded-3 small">
+                                <div style="white-space: pre-line;">{{ report.evidence_required }}</div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- 6. Next Steps Action Plan -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-success mb-2">
+                            <i class="bi bi-signpost-2-fill me-2"></i>6. Actionable Next Steps
+                        </h6>
+                        <div class="p-3 bg-success bg-opacity-10 border border-success border-opacity-25 rounded-3 small text-success-emphasis">
+                            <div style="white-space: pre-line;">{{ report.next_steps }}</div>
+                        </div>
+                    </div>
+
+                    <!-- 7. Advocate Strategy Notes -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-secondary mb-2">
+                            <i class="bi bi-journal-check me-2"></i>7. Counsel Strategy & AI Recommendations
+                        </h6>
+                        <div class="p-3 bg-body-tertiary rounded-3 small">
+                            <div style="white-space: pre-line;">{{ report.advocate_notes }}</div>
+                        </div>
+                    </div>
+
+                    <!-- 8 & 9. Forum & Timeline Cards -->
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="p-3 bg-body-tertiary rounded-3 border">
+                                <small class="text-muted d-block fw-semibold mb-1">Recommended Judicial Forum</small>
+                                <div class="fw-bold text-primary">{{ report.court_suggestion }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 bg-body-tertiary rounded-3 border">
+                                <small class="text-muted d-block fw-semibold mb-1">Estimated Judicial Timeline</small>
+                                <div class="fw-bold text-info">{{ report.timeline_estimate }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                {% elif case.ai_summary %}
+                    <!-- Legacy summary display -->
+                    <div class="p-3 bg-body-tertiary rounded-3 small" style="white-space: pre-wrap;">
+                        {{ case.ai_summary }}
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-cpu fs-1 text-muted d-block mb-3"></i>
+                        <h6 class="fw-bold">No AI Report Available Yet</h6>
+                        <p class="small text-muted">Submit an inquiry or trigger analysis to generate legal breakdown.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
