@@ -1,4 +1,4 @@
-﻿# ⚖️ Legal AI Assistant & Practice Management Portal
+# ⚖️ Legal AI Assistant & Practice Management Portal
 ### *Official Digital Chambers of Advocate Mukesh Singh Rathod — Private Advocate & Legal Counsel*
 
 [![Python](https://img.shields.io/badge/Python-3.12+-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
@@ -187,6 +187,14 @@ OK
 6. Click **Deploy Web Service**. Your live URL will be ready at:
    https://<your-service-name>.onrender.com
 
+## 👨‍💻 Author & Lead Engineer
+
+**Yash Raj Singh Rathod**  
+- **Degree**: B.Tech in Computer Science & Engineering (Artificial Intelligence)  
+- **Institution**: Medi-Caps University, Indore  
+- **GitHub**: [@yashrajr368-ops](https://github.com/yashrajr368-ops)  
+- **Project Scope**: Designed and engineered for the official practice of **Advocate Mukesh Singh Rathod — Private Advocate & Legal Counsel**.
+
 ---
 
 ## ⚖️ Legal Disclaimer
@@ -197,4 +205,5 @@ This software is an AI-augmented decision support and practice management system
 
 ## 📄 License
 
-Distributed under the **MIT License**. See LICENSE for more information.
+Distributed under the **MIT License**. See `LICENSE` for more information.
+
