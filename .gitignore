@@ -1,4 +1,4 @@
-﻿# Python byte-code / caches
+# Python byte-code / caches
 __pycache__/
 *.py[cod]
 *.class
@@ -22,8 +22,11 @@ uploads/*
 .env
 .env.local
 
-# Redundant nested clone
+# Redundant nested clone and other project directories
 legal_ai/
+backend/
+casify/
+frontend/
 
 # IDE & OS files
 .vscode/
