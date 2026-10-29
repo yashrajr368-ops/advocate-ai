@@ -34,17 +34,27 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "ai_advocate_super_secret_key_2026")
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
+is_vercel = bool(os.getenv("VERCEL"))
+if is_vercel:
+    base_dir = "/tmp"
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.path.join(base_dir, 'database.db')}"
+    UPLOAD_FOLDER = os.path.join(base_dir, "uploads")
+else:
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", "sqlite:///database.db")
+    UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Upload Configuration
-UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16 MB max
 
 ALLOWED_EXTENSIONS = {"pdf", "doc", "docx", "png", "jpg", "jpeg"}
 
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+try:
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+except Exception as e:
+    print(f"Warning: could not create upload directory {UPLOAD_FOLDER}: {e}")
 
 # Initialize Extensions
 db.init_app(app)
